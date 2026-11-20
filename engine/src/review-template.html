@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photo Book Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap">
+<style>
+:root {
+  --bg: #F4F2EE; --surface: #FFFFFF; --well: #E9E6E0; --fg: #23201C; --muted: #6F6962; --line: #DCD8D1;
+  --accent: #A8322B; --like: #2E7D4F; --maybe: #9A6B12; --no: #8A8580; --on: #FFFFFF;
+  --font: "Jost", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #171615; --surface: #211F1D; --well: #2B2926; --fg: #ECE8E1; --muted: #A39D94; --line: #3A3733;
+  --accent: #D9574E; --like: #3E9C66; --maybe: #D9A441; --no: #77716A; --on: #0E0D0C; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #171615; --surface: #211F1D; --well: #2B2926; --fg: #ECE8E1; --muted: #A39D94; --line: #3A3733;
+  --accent: #D9574E; --like: #3E9C66; --maybe: #D9A441; --no: #77716A; --on: #0E0D0C; color-scheme: dark }
+* { box-sizing: border-box }
+[hidden] { display: none !important }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 15px; line-height: 1.45 }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 0 16px }
+.bar { position: sticky; top: 0; z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line) }
+.bar .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding-block: 10px }
+h1 { margin: 0; font-size: 19px; font-weight: 500; letter-spacing: .02em }
+.meta { color: var(--muted); font-size: 12.5px }
+.tabs { display: flex; gap: 4px; flex-wrap: wrap }
+button { font: inherit; color: inherit }
+.tab { font-size: 14px; border: 1px solid var(--line); background: transparent; padding: 6px 13px; border-radius: 999px; cursor: pointer }
+.tab[aria-selected="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg) }
+.status { margin-left: auto; font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 6px }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--like) }
+.status[data-s="busy"] .dot { background: var(--maybe) } .status[data-s="off"] .dot { background: var(--accent) }
+.banner { margin: 14px 0 0; padding: 10px 14px; border: 1px solid var(--accent); background: var(--surface); font-size: 14px }
+main { padding-block: 18px 80px }
+.help { color: var(--muted); font-size: 14px; margin: 0 0 14px; max-width: 78ch }
+.help kbd { font: inherit; font-size: 12px; border: 1px solid var(--line); border-bottom-width: 2px; padding: 0 5px; border-radius: 3px; background: var(--surface) }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px }
+.chip { font-size: 13.5px; border: 1px solid var(--line); background: var(--surface); padding: 5px 11px; border-radius: 999px; cursor: pointer }
+.chip[aria-pressed="true"] { border-color: var(--fg); box-shadow: inset 0 0 0 1px var(--fg) }
+.chip .n { color: var(--muted); margin-left: 4px; font-variant-numeric: tabular-nums }
+.counts { font-size: 13.5px; color: var(--muted); margin: 0 0 14px; font-variant-numeric: tabular-nums }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px }
+.card { background: var(--surface); border: 2px solid var(--line); display: flex; flex-direction: column; min-width: 0 }
+.card[data-mark="like"] { border-color: var(--like) } .card[data-mark="maybe"] { border-color: var(--maybe) }
+.card[data-mark="no"] { opacity: .45 }
+.card .img { position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; background: var(--well); border: 0; padding: 0; cursor: zoom-in; overflow: hidden }
+.card .img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block }
+.row { display: flex; align-items: center; gap: 6px; padding: 8px 10px 0; flex-wrap: wrap }
+.code { font-size: 17px; font-weight: 500; font-variant-numeric: tabular-nums }
+.time { font-size: 12px; color: var(--muted) }
+.badge { font-size: 11.5px; padding: 1px 6px; border-radius: 3px; border: 1px solid var(--line); color: var(--muted) }
+.badge.used { background: var(--fg); color: var(--bg); border-color: var(--fg) }
+.badge.warn { color: var(--accent); border-color: var(--accent) }
+.marks { display: flex; gap: 6px; padding: 8px 10px 0 }
+.mk { flex: 1; border: 1px solid var(--line); background: transparent; padding: 5px 0; border-radius: 4px; cursor: pointer; font-size: 14px }
+.mk[data-m="like"][aria-pressed="true"] { background: var(--like); border-color: var(--like); color: var(--on) }
+.mk[data-m="maybe"][aria-pressed="true"] { background: var(--maybe); border-color: var(--maybe); color: var(--on) }
+.mk[data-m="no"][aria-pressed="true"] { background: var(--no); border-color: var(--no); color: var(--on) }
+textarea { font: inherit; font-size: 14px; width: 100%; min-height: 40px; resize: vertical; border: 0; background: transparent; color: var(--fg); padding: 8px 10px 10px; outline: none }
+textarea::placeholder { color: var(--muted) }
+textarea.has { background: color-mix(in srgb, var(--accent) 7%, transparent) }
+.spread { background: var(--surface); border: 1px solid var(--line); margin: 0 0 22px }
+.spread img { width: 100%; height: auto; display: block; cursor: zoom-in }
+.spread .row { padding-bottom: 2px }
+.spread textarea { min-height: 56px; border-top: 1px solid var(--line) }
+.hist { font-size: 13px; color: var(--muted); padding: 0 10px 10px }
+.hist summary { cursor: pointer }
+.q { background: var(--surface); border: 1px solid var(--line); padding: 14px; margin: 0 0 14px }
+.q h3 { margin: 0 0 8px; font-size: 16px; font-weight: 500 }
+.q .opts { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px }
+.q img { max-width: 100%; display: block; margin: 0 0 10px }
+.q textarea { border: 1px solid var(--line) }
+.lb { position: fixed; inset: 0; z-index: 20; background: rgba(10,10,10,.94); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px }
+.lb img { max-width: 100%; max-height: calc(100vh - 110px); object-fit: contain }
+.lb .cap { color: #eee; margin-top: 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center }
+.lb .mk { flex: 0 0 auto; padding: 5px 14px; color: #eee; border-color: #555 }
+.lb .x { position: absolute; top: 10px; right: 14px; background: transparent; border: 0; color: #fff; font-size: 30px; cursor: pointer }
+.lb .nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,.08); border: 0; color: #fff; font-size: 30px; width: 48px; height: 72px; cursor: pointer }
+.lb .prev { left: 8px } .lb .next { right: 8px }
+.empty { color: var(--muted); padding: 30px 0 }
+@media (max-width: 560px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px } .status { margin-left: 0 } }
+</style>
+</head>
+<body>
+<div class="bar"><div class="wrap">
+  <div><h1 id="title"></h1><div class="meta" id="meta"></div></div>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="pick">Pick photos</button>
+    <button class="tab" role="tab" data-tab="spreads">Spreads</button>
+    <button class="tab" role="tab" data-tab="questions">Questions <span id="qn"></span></button>
+  </div>
+  <div class="status" id="status" data-s="ok"><span class="dot"></span><span id="status-text">Saved</span></div>
+</div></div>
+<div class="wrap">
+  <div class="banner" id="offline" hidden>Not saving: the review page is not running. Ask Claude to “open the review page again”, then reload this page.</div>
+  <div class="banner" id="newer" hidden>A newer version is ready. <button class="chip" id="reload">Reload</button></div>
+  <main>
+    <section id="pick" hidden>
+      <p class="help">Mark every photo you want in the book: <b>✓</b> yes, <b>?</b> only if there is room, <b>✗</b> no. Photos without a mark are left out once you have marked some.
+      Click a photo to see it big; there you can use the keys <kbd>1</kbd> ✓ <kbd>2</kbd> ? <kbd>3</kbd> ✗ <kbd>0</kbd> clear and <kbd>←</kbd> <kbd>→</kbd>. Type a note under any photo (“crop the left person off”, “this one big”).</p>
+      <div class="chips" id="chapters"></div>
+      <div class="chips" id="filters"></div>
+      <p class="counts" id="counts"></p>
+      <div class="grid" id="grid"></div>
+    </section>
+    <section id="spreads" hidden>
+      <p class="help">This is how the book looks now: the cover, then every double page. Each photo has a small code in its corner (not printed). Write what you would change under a spread, e.g. “swap 1234 and 1250”, “1288 bigger”, “too busy”. Then tell Claude you are done.</p>
+      <p class="help" id="pdf"></p>
+      <div id="spread-list"></div>
+    </section>
+    <section id="questions" hidden>
+      <p class="help">Claude's questions. Click an answer or type one.</p>
+      <div id="q-list"></div>
+    </section>
+  </main>
+</div>
+<div class="lb" id="lb" hidden>
+  <button class="x" id="lb-x" aria-label="Close">×</button>
+  <button class="nav prev" id="lb-prev" aria-label="Previous">‹</button>
+  <img id="lb-img" alt="">
+  <button class="nav next" id="lb-next" aria-label="Next">›</button>
+  <div class="cap"><span id="lb-cap"></span><span id="lb-marks"></span></div>
+</div>
+<script>
+const DATA = /*DATA*/null;
+const $ = (id) => document.getElementById(id);
+const el = (tag, attrs = {}, ...kids) => { const e = document.createElement(tag); for (const [k, v] of Object.entries(attrs)) { if (k === 'class') e.className = v; else if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else if (v != null) e.setAttribute(k, v); } for (const k of kids) if (k != null) e.append(k); return e; };
+let FB = { marks: {}, notes: {}, answers: {} };
+const store = (() => { try { return window.localStorage; } catch { return null; } })();
+const remember = (k, v) => { try { store && store.setItem('pb.' + k, v); } catch {} };
+const recall = (k) => { try { return store ? store.getItem('pb.' + k) : null; } catch { return null; } };
+
+// ---------- saving ----------
+let pending = 0;
+const setStatus = (s, t) => { $('status').dataset.s = s; $('status-text').textContent = t; };
+async function save(type, id, value) {
+  pending++; setStatus('busy', 'Saving…');
+  try {
+    const r = await fetch('api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type, id, value }) });
+    if (!r.ok) throw new Error(r.status);
+    $('offline').hidden = true;
+    if (--pending === 0) setStatus('ok', 'Saved');
+  } catch { pending--; setStatus('off', 'Not saved'); $('offline').hidden = false; }
+}
+
+// ---------- header ----------
+$('title').textContent = DATA.title;
+$('meta').textContent = `${DATA.format} · ${DATA.pages} pages`;
+document.title = DATA.title + ' – review';
+const tabs = [...document.querySelectorAll('.tab')];
+function showTab(t) { tabs.forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t))); for (const s of ['pick', 'spreads', 'questions']) $(s).hidden = s !== t; remember('tab', t); }
+tabs.forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+$('qn').textContent = DATA.questions.length ? `(${DATA.questions.length})` : '';
+
+// ---------- notes ----------
+function noteBox(id, placeholder) {
+  const t = el('textarea', { placeholder, 'aria-label': placeholder });
+  const n = FB.notes[id];
+  t.value = n?.text || ''; t.classList.toggle('has', !!t.value);
+  let timer;
+  t.addEventListener('input', () => { t.classList.toggle('has', !!t.value); clearTimeout(timer); setStatus('busy', 'Typing…'); timer = setTimeout(() => save('notes', id, t.value), 600); });
+  t.addEventListener('blur', () => { clearTimeout(timer); if ((FB.notes[id]?.text || '') !== t.value) { FB.notes[id] = { ...(FB.notes[id] || {}), text: t.value }; save('notes', id, t.value); } });
+  return t;
+}
+function history(id) {
+  const h = FB.notes[id]?.history || [];
+  if (!h.length) return null;
+  return el('details', { class: 'hist' }, el('summary', {}, `Earlier notes (${h.length})`), ...h.map(x => el('div', {}, `“${x.text}” → ${x.done || 'done'}`)));
+}
+
+// ---------- pick ----------
+let chapter = recall('chapter') || DATA.chapters[0]?.id, filter = recall('filter') || 'all';
+const markOf = (k) => FB.marks[k] || '';
+const FILTERS = [['all', 'All'], ['like', '✓ Yes'], ['maybe', '? Maybe'], ['none', 'Not marked'], ['no', '✗ No']];
+let visible = [];
+function setMark(p, m) {
+  const next = markOf(p.key) === m ? '' : m;
+  if (next) FB.marks[p.key] = next; else delete FB.marks[p.key];
+  save('marks', p.key, next || null);
+  paintCard(p); counts(); chips();
+  if (!$('lb').hidden) lbPaint();
+}
+function markButtons(p) {
+  return [['like', '✓'], ['maybe', '?'], ['no', '✗']].map(([m, s]) => el('button', { class: 'mk', 'data-m': m, 'aria-pressed': String(markOf(p.key) === m), title: m === 'like' ? 'Yes (1)' : m === 'maybe' ? 'If there is room (2)' : 'No (3)', onclick: () => setMark(p, m) }, s));
+}
+const cards = new Map();
+function paintCard(p) {
+  const c = cards.get(p.key); if (!c) return;
+  c.dataset.mark = markOf(p.key);
+  c.querySelectorAll('.mk').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === markOf(p.key))));
+}
+function chips() {
+  const box = $('chapters'); box.textContent = '';
+  for (const c of DATA.chapters) {
+    const liked = c.photos.filter(p => markOf(p.key) === 'like').length;
+    box.append(el('button', { class: 'chip', 'aria-pressed': String(c.id === chapter), onclick: () => { chapter = c.id; remember('chapter', chapter); renderPick(); } }, c.title, el('span', { class: 'n' }, `${liked ? liked + ' ✓ / ' : ''}${c.photos.length}`)));
+  }
+  const fb = $('filters'); fb.textContent = '';
+  for (const [k, label] of FILTERS) fb.append(el('button', { class: 'chip', 'aria-pressed': String(k === filter), onclick: () => { filter = k; remember('filter', k); renderPick(); } }, label));
+}
+function counts() {
+  const all = DATA.chapters.flatMap(c => c.photos);
+  const n = (m) => all.filter(p => markOf(p.key) === m).length;
+  $('counts').textContent = `Whole book: ✓ ${n('like')} · ? ${n('maybe')} · ✗ ${n('no')} · not marked ${all.length - n('like') - n('maybe') - n('no')} of ${all.length} photos. About 3 photos fit on a page.`;
+}
+function renderPick() {
+  chips(); counts();
+  const ch = DATA.chapters.find(c => c.id === chapter) || DATA.chapters[0];
+  const grid = $('grid'); grid.textContent = ''; cards.clear();
+  if (!ch) { grid.append(el('p', { class: 'empty' }, 'No photos yet.')); return; }
+  visible = ch.photos.filter(p => filter === 'all' || (filter === 'none' ? !markOf(p.key) : markOf(p.key) === filter));
+  if (!visible.length) grid.append(el('p', { class: 'empty' }, 'Nothing here with this filter.'));
+  let lastBurst = null;
+  visible.forEach((p, i) => {
+    const t = p.taken ? new Date(p.taken + 'Z').toLocaleString(undefined, { timeZone: 'UTC', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+    const sameBurst = p.burst === lastBurst; lastBurst = p.burst;
+    const card = el('div', { class: 'card', 'data-mark': markOf(p.key) },
+      el('button', { class: 'img', onclick: () => lbOpen(i), 'aria-label': 'Show ' + p.name + ' big' }, el('img', { src: p.thumb, alt: p.name, loading: 'lazy' })),
+      el('div', { class: 'row' }, el('span', { class: 'code' }, p.code), el('span', { class: 'time' }, t),
+        p.used ? el('span', { class: 'badge used', title: 'In the book on this spread' }, p.used) : null,
+        sameBurst ? el('span', { class: 'badge', title: 'Taken right after the previous photo' }, 'similar') : null,
+        p.small ? el('span', { class: 'badge warn', title: 'Low resolution: keep it small in the book' }, 'small file') : null),
+      el('div', { class: 'marks' }, ...markButtons(p)),
+      noteBox('photo:' + p.key, 'Note…'));
+    cards.set(p.key, card); grid.append(card);
+  });
+}
+
+// ---------- lightbox ----------
+let lbI = 0, lbList = [];
+function lbOpen(i, list = visible) { lbList = list; lbI = i; $('lb').hidden = false; lbPaint(); }
+function lbPaint() {
+  const p = lbList[lbI]; if (!p) return;
+  $('lb-img').src = p.thumb || p.img; $('lb-img').alt = p.name || p.tag;
+  $('lb-cap').textContent = p.key ? `${p.code} · ${p.name} (${lbI + 1} / ${lbList.length})` : p.tag;
+  const m = $('lb-marks'); m.textContent = '';
+  if (p.key) m.append(...markButtons(p));
+  $('lb-prev').hidden = $('lb-next').hidden = lbList.length < 2;
+}
+const lbMove = (d) => { lbI = (lbI + d + lbList.length) % lbList.length; lbPaint(); };
+$('lb-x').onclick = () => { $('lb').hidden = true; };
+$('lb-prev').onclick = () => lbMove(-1); $('lb-next').onclick = () => lbMove(1);
+$('lb').addEventListener('click', (e) => { if (e.target.id === 'lb') $('lb').hidden = true; });
+document.addEventListener('keydown', (e) => {
+  if ($('lb').hidden || e.target.tagName === 'TEXTAREA') return;
+  const p = lbList[lbI];
+  if (e.key === 'Escape') $('lb').hidden = true;
+  else if (e.key === 'ArrowLeft') lbMove(-1);
+  else if (e.key === 'ArrowRight') lbMove(1);
+  else if (p?.key && ['1', '2', '3', '0'].includes(e.key)) {
+    const m = { 1: 'like', 2: 'maybe', 3: 'no', 0: '' }[e.key];
+    if (m) { if (markOf(p.key) !== m) setMark(p, m); } else if (markOf(p.key)) setMark(p, markOf(p.key));
+    if (m && lbI < lbList.length - 1) setTimeout(() => lbMove(1), 120);
+  }
+});
+
+// ---------- spreads ----------
+function renderSpreads() {
+  const box = $('spread-list'); box.textContent = '';
+  $('pdf').textContent = '';
+  $('pdf').append('Flip through the whole book as one file: ', el('a', { href: 'book-preview.pdf', target: '_blank' }, 'Book preview.pdf'));
+  const list = [...(DATA.cover ? [{ tag: 'Cover', id: 'cover', img: DATA.cover }] : []), ...DATA.chapters.flatMap(c => c.spreads.map(s => ({ ...s, chapter: c.title })))];
+  if (!list.some(s => s.img)) { box.append(el('p', { class: 'empty' }, 'No spreads yet. Pick photos first, then tell Claude to design the book.')); return; }
+  const imgs = list.filter(s => s.img).map(s => ({ ...s, thumb: s.img }));
+  for (const s of list) {
+    const id = 'spread:' + s.id;
+    box.append(el('div', { class: 'spread' },
+      s.img ? el('img', { src: s.img, alt: s.tag, loading: 'lazy', onclick: () => lbOpen(imgs.findIndex(x => x.id === s.id), imgs) }) : el('p', { class: 'empty' }, 'Preview not rendered yet'),
+      el('div', { class: 'row' }, el('span', { class: 'code' }, s.tag), el('span', { class: 'time' }, s.alt ? 'alternative version – say which one you prefer' : s.chapter || '')),
+      noteBox(id, 'What would you change on this page?'), history(id)));
+  }
+  box.append(el('div', { class: 'spread' }, el('div', { class: 'row' }, el('span', { class: 'code' }, 'The whole book')), noteBox('book', 'Anything about the whole book (style, order, size, title)…'), history('book')));
+}
+
+// ---------- questions ----------
+function renderQuestions() {
+  const box = $('q-list'); box.textContent = '';
+  if (!DATA.questions.length) { box.append(el('p', { class: 'empty' }, 'No questions right now.')); return; }
+  for (const q of DATA.questions) {
+    const a = FB.answers[q.id] || {};
+    const opts = el('div', { class: 'opts' });
+    for (const o of q.options || []) opts.append(el('button', { class: 'chip', 'aria-pressed': String(a.choice === o), onclick: (e) => { const choice = a.choice === o ? null : o; a.choice = choice; FB.answers[q.id] = { ...a }; save('answers', q.id, { ...a }); opts.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', String(b.textContent === choice))); } }, o));
+    const t = el('textarea', { placeholder: 'Your answer…' }); t.value = a.text || '';
+    t.addEventListener('change', () => { a.text = t.value; FB.answers[q.id] = { ...a }; save('answers', q.id, { ...a }); });
+    box.append(el('div', { class: 'q' }, el('h3', {}, q.text), q.img ? el('img', { src: q.img, alt: '' }) : null, opts, t));
+  }
+}
+
+// ---------- start ----------
+let built = 0;
+(async () => {
+  try { FB = await (await fetch('api/feedback')).json(); }
+  catch { $('offline').hidden = false; setStatus('off', 'Not connected'); }
+  renderPick(); renderSpreads(); renderQuestions();
+  const hasSpreads = DATA.chapters.some(c => c.spreads.some(s => s.img));
+  showTab(recall('tab') || (hasSpreads ? 'spreads' : 'pick'));
+  try { built = (await (await fetch('api/built')).json()).built; } catch {}
+  setInterval(async () => { try { const b = (await (await fetch('api/built')).json()).built; $('newer').hidden = !(built && b > built); $('offline').hidden = true; } catch { $('offline').hidden = false; } }, 15000);
+})();
+$('reload').onclick = () => location.reload();
+</script>
+</body>
+</html>

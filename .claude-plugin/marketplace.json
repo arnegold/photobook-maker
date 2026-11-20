@@ -1,0 +1,11 @@
+{
+  "name": "photobook-maker",
+  "owner": { "name": "photobook-maker contributors" },
+  "plugins": [
+    {
+      "name": "photobook",
+      "source": "./",
+      "description": "Make a print-ready photo book from a folder of photos, guided by Claude."
+    }
+  ]
+}

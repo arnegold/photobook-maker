@@ -1,0 +1,4 @@
+node_modules/
+engine/test/sample-photos/
+engine/test/sample-book/
+*.tmp

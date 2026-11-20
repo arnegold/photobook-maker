@@ -1,0 +1,7 @@
+{
+  "name": "photobook",
+  "description": "Make a print-ready photo book from a folder of photos: guided choice of book and printing service, chapters from photo dates and places, a local photo picker, layflat designs with photos across the fold, preview rounds and print PDFs.",
+  "author": { "name": "photobook-maker contributors" },
+  "license": "MIT",
+  "keywords": ["photobook", "photo book", "layflat", "print", "album"]
+}
