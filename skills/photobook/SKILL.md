@@ -24,11 +24,10 @@ You guide someone, often **not technical**, from "here is my folder of photos" t
 ## The engine
 All work is done by one command (run it with Bash; quote paths, they often contain spaces):
 
-```
-node "${CLAUDE_PLUGIN_ROOT}/engine/bin/photobook.mjs" <command> --book "<book folder>"
-```
+- Windows: `"${CLAUDE_PLUGIN_ROOT}/scripts/photobook.cmd" <command> --book "<book folder>"`
+- Mac and Linux: `sh "${CLAUDE_PLUGIN_ROOT}/scripts/photobook.sh" <command> --book "<book folder>"`
 
-Below, `photobook <command>` is short for that line. Commands print JSON; read it, then tell the person what matters in one or two sentences.
+The launcher brings its own private Node.js, so the person never installs anything. Never ask them to install Node.js or run npm. Below, `photobook <command>` is short for that line. Commands print JSON; read it, then tell the person what matters in one or two sentences.
 
 | command | what it does |
 |---|---|
@@ -51,9 +50,8 @@ Reference files in this folder (read them when you reach that step):
 - book.yaml has a comment header that explains every option.
 
 ## Step 0: setup (first time only)
-1. Run `photobook doctor`.
-   - Node.js missing or too old: say "I need one free helper program, Node.js. May I install it?" On Windows, with their OK, run `winget install OpenJS.NodeJS.LTS`. On a Mac, send them to https://nodejs.org (the big LTS button) and wait. Afterwards the Claude app may need a restart.
-   - Engine parts missing: run `npm install --omit=dev` in `${CLAUDE_PLUGIN_ROOT}` (this takes a minute). Run doctor again.
+1. Say "One-time setup, about a minute." and run `photobook doctor` (Bash timeout 10 minutes). The first run downloads a private copy of Node.js from nodejs.org (checksum-checked, no admin rights, nothing else on the computer changes) plus the engine's parts.
+   - If it fails, it says why (usually no internet). Ask them to check the connection, then run doctor again.
 2. If they already have a book (they say "continue", or a folder has a book.yaml), open it and jump to the right step: check `feedback` and the state of book.yaml.
 
 ## Step 1: what kind of book

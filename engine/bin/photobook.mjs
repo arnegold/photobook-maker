@@ -29,7 +29,7 @@ async function doctor() {
   res.fonts = fs.existsSync(path.join(ENGINE, 'fonts', 'Jost-400.ttf'));
   res.ok = res.nodeOk && !res.missing.length && res.fonts;
   if (!res.nodeOk) res.fix = 'Install Node.js 20 or newer (LTS) from https://nodejs.org';
-  else if (res.missing.length) res.fix = `Run: npm install --omit=dev   (in ${path.resolve(ENGINE, '..')})`;
+  else if (res.missing.length) res.fix = `Run: npm ci --omit=dev   (in ${ENGINE})`;
   return res;
 }
 

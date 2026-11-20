@@ -28,7 +28,7 @@ The same selection laid out for a layflat book (left) and a book with a normal b
 
 ## Install
 
-Requirements: the Claude desktop app (a paid plan, for the Code tab) and Node.js 20 or newer. See [docs/INSTALL.md](docs/INSTALL.md) for a step-by-step guide.
+Requirements: the Claude desktop app (a paid plan, for the Code tab), on Windows, Mac or Linux. Nothing else: on first use the plugin downloads its own private copy of Node.js from nodejs.org (checksum-checked, no admin rights). See [docs/INSTALL.md](docs/INSTALL.md) for a step-by-step guide.
 
 ```
 /plugin marketplace add arnegold/photobook-maker
@@ -53,6 +53,7 @@ Only Saal 21×28 has been checked against the printer's template and a printed b
 ```
 .claude-plugin/           plugin and marketplace manifest
 skills/photobook/         the guided workflow (SKILL.md), service guide, design rules
+scripts/                  launchers that bring their own Node.js (Windows .cmd, Mac/Linux .sh)
 engine/bin/photobook.mjs  command line for every step
 engine/src/               formats, EXIF scan and chapters, auto layout, page packing,
                           rendering (previews and print PDFs), review page and local server
@@ -85,10 +86,10 @@ Boxes are in mm. The first box is wider than the 210 mm page, so it crosses the 
 
 ## Command line
 
-The engine also works without Claude:
+The engine also works without Claude. With Node.js 20+ installed:
 
 ```
-npm install
+cd engine && npm install && cd ..
 node engine/bin/photobook.mjs help
 node engine/bin/photobook.mjs new ~/Photobooks/Trip --photos ~/Pictures/Trip --format saal-21x28 --title "Trip 2026"
 node engine/bin/photobook.mjs scan --book ~/Photobooks/Trip
@@ -99,7 +100,9 @@ node engine/bin/photobook.mjs render --book ~/Photobooks/Trip
 node engine/bin/photobook.mjs print --book ~/Photobooks/Trip
 ```
 
-`npm test` generates the test photos and runs the full flow (new, scan, chapters, picking, layout, render, review, print) for a layflat book, a normal book and an editor-images book.
+Without Node.js, use `scripts/photobook.cmd` (Windows) or `sh scripts/photobook.sh` (Mac/Linux) instead of `node engine/bin/photobook.mjs`; they fetch a private Node.js on first use.
+
+`npm test` (in `engine/`) generates the test photos and runs the full flow (new, scan, chapters, picking, layout, render, review, print) for a layflat book, a normal book and an editor-images book.
 
 ## Limitations
 
