@@ -16,7 +16,7 @@ You can skip this step: in step 4, Claude notices when Node.js is missing and of
 Open the Claude app, go to the **Code** tab, open any folder (for example Documents), and type these two lines in the message box, one at a time:
 
 ```
-/plugin marketplace add YOUR-GITHUB-NAME/photobook-maker
+/plugin marketplace add arnegold/photobook-maker
 ```
 ```
 /plugin install photobook@photobook-maker
@@ -24,10 +24,10 @@ Open the Claude app, go to the **Code** tab, open any folder (for example Docume
 
 Then close and reopen the app.
 
-If the app does not accept `/plugin`, click the **+** next to the message box and look for **Plugins**. Or ask whoever sent you this link to do step 3 with you. It takes one minute in a terminal:
+If the app does not accept `/plugin`, click the **+** next to the message box and look for **Plugins**. Or ask whoever sent you this link to help. It takes one minute in a terminal:
 
 ```
-npx @anthropic-ai/claude-code plugin marketplace add YOUR-GITHUB-NAME/photobook-maker
+npx @anthropic-ai/claude-code plugin marketplace add arnegold/photobook-maker
 npx @anthropic-ai/claude-code plugin install photobook@photobook-maker --scope user
 ```
 

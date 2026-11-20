@@ -64,7 +64,7 @@ The same picks give two different books, because each is designed for its bindin
 You need the **Claude desktop app** (paid plan, for the Code tab), **Node.js** (free, one installer) and **this plugin**. Step-by-step guide for non-techies: **[docs/INSTALL.md](docs/INSTALL.md)**.
 
 ```
-/plugin marketplace add YOUR-GITHUB-NAME/photobook-maker
+/plugin marketplace add arnegold/photobook-maker
 /plugin install photobook@photobook-maker
 ```
 
